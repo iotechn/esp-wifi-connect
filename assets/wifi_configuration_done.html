@@ -1,70 +1,410 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
     <title>WiFi Configuration</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
+        :root {
+            --done-bg-top: #1d1b35;
+            --done-bg-mid1: #2c2445;
+            --done-bg-mid2: #4b2e3a;
+            --done-bg-bottom: #6b3a24;
+            --done-surface: #151524;
+            --done-surface-soft: rgba(41, 43, 67, 0.35);
+            --done-border: #292b43;
+            --done-border-strong: #5a72ff;
+            --done-text: #fdf6ec;
+            --done-text-muted: rgba(207, 216, 255, 0.72);
+            --done-text-dim: rgba(255, 255, 255, 0.55);
+            --done-accent: #7f93ff;
+            --done-accent-soft: rgba(127, 147, 255, 0.28);
+            --done-success: #73d13d;
+            --done-gold: #ffd666;
+            --done-radius-sm: 6px;
+            --done-radius-lg: 16px;
+            --done-shadow-panel: 0 0 0 3px #050511, 0 6px 16px rgba(0, 0, 0, 0.6);
+            --done-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        .container {
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            font-family: var(--done-font);
+            color: var(--done-text);
+            background: linear-gradient(180deg, var(--done-bg-top) 0%, var(--done-bg-mid1) 35%, var(--done-bg-mid2) 60%, var(--done-bg-bottom) 100%);
+            padding: 20px 16px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .done-shell {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .done-top {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--done-surface);
+            border: 3px solid var(--done-border);
+            border-radius: var(--done-radius-sm);
+            box-shadow: var(--done-shadow-panel);
+        }
+
+        .done-page-title {
+            margin: 0;
+            font-size: clamp(15px, 3.8vw, 18px);
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            color: #fff;
+            line-height: 1.25;
+            min-width: 0;
+        }
+
+        .language-switch {
+            flex-shrink: 0;
+        }
+
+        .language-switch select {
+            appearance: none;
+            -webkit-appearance: none;
+            min-width: 132px;
+            max-width: 42vw;
+            padding: 8px 28px 8px 12px;
+            border: 2px solid var(--done-border);
+            border-radius: 999px;
+            background: var(--done-surface-soft);
+            color: var(--done-text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23cfd8ff' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .language-switch select:hover {
+            border-color: var(--done-border-strong);
+            color: #fff;
+        }
+
+        .language-switch select:focus-visible {
+            outline: none;
+            border-color: var(--done-accent);
+            box-shadow: 0 0 0 2px var(--done-accent-soft);
+        }
+
+        .done-body {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 2px 12px;
+        }
+
+        .done-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 28px 22px 30px;
+            background: var(--done-surface);
+            border: 3px solid var(--done-border);
+            border-radius: var(--done-radius-sm);
+            box-shadow: var(--done-shadow-panel);
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
+            gap: 18px;
+        }
+
+        .done-icon-wrap {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            /* Prevent content from overflowing */
-            max-height: 100vh;
-            box-sizing: border-box;
-            padding: 20px;
+            background: radial-gradient(circle at 30% 25%, rgba(115, 209, 61, 0.35), rgba(21, 21, 36, 0.2) 55%);
+            border: 2px solid rgba(115, 209, 61, 0.45);
+            box-shadow: 0 0 0 1px rgba(127, 147, 255, 0.2) inset;
         }
 
         .checkmark {
-            width: 150px;
-            height: 150px;
-            margin-bottom: 30px;
+            width: 72px;
+            height: 72px;
         }
 
-        .message {
-            text-align: center;
-            font-size: 20px;
-            margin-bottom: 20px;
+        .checkmark__circle {
+            stroke: var(--done-success);
+        }
+
+        .checkmark__check {
+            stroke: var(--done-gold);
+        }
+
+        .done-message {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 340px;
+        }
+
+        .done-title {
+            margin: 0;
+            font-size: clamp(18px, 4.5vw, 22px);
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            color: #fff7e6;
+        }
+
+        .done-subtitle {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.55;
+            color: var(--done-text-dim);
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @media (max-width: 380px) {
+            .done-top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .language-switch select {
+                max-width: none;
+                width: 100%;
+            }
+
+            .done-card {
+                padding: 22px 16px 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <svg class="checkmark" viewBox="0 0 52 52">
-            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" stroke="#4CAF50" stroke-width="2"/>
-            <path class="checkmark__check" fill="none" stroke="#4CAF50" stroke-width="2" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-        </svg>
-        
-        <div class="message">
-            <p>配置成功！</p>
-            <p>Configuration successful!</p>
+    <div class="done-shell">
+        <header class="done-top">
+            <h1 class="done-page-title" data-lang="title">Wi-Fi</h1>
+            <div class="language-switch">
+                <label for="language" class="visually-hidden" data-lang="language_label">Language</label>
+                <select id="language" onchange="changeLanguage()">
+                    <option value="ar-SA">العربية</option>
+                    <option value="de-DE">Deutsch</option>
+                    <option value="en-US">English</option>
+                    <option value="es-ES">Español</option>
+                    <option value="fr-FR">Français</option>
+                    <option value="hi-IN">हिन्दी</option>
+                    <option value="it-IT">Italiano</option>
+                    <option value="ja-JP">日本語</option>
+                    <option value="ko-KR">한국어</option>
+                    <option value="pt-BR">Português (Brasil)</option>
+                    <option value="zh-CN">简体中文</option>
+                    <option value="zh-TW">繁體中文</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="done-body">
+            <div class="done-card">
+                <div class="done-icon-wrap" aria-hidden="true">
+                    <svg class="checkmark" viewBox="0 0 52 52" aria-hidden="true">
+                        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" stroke-width="2"/>
+                        <path class="checkmark__check" fill="none" stroke-width="2" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+                <div class="done-message">
+                    <p class="done-title" data-lang="done_title">Configuration successful!</p>
+                    <p class="done-subtitle" data-lang="done_subtitle">You can close this page.</p>
+                </div>
+            </div>
         </div>
     </div>
-    
+
     <script>
-        window.addEventListener('load', function() {
-            // Send exit request after a short delay
-            setTimeout(function() {
+        const translations = {
+            'ar-SA': {
+                title: 'اكتمل إعداد Wi-Fi',
+                language_label: 'اللغة',
+                done_title: 'اكتمل الإعداد بنجاح!',
+                done_subtitle: 'يمكنك إغلاق هذه الصفحة.',
+            },
+            'de-DE': {
+                title: 'Wi-Fi-Einrichtung',
+                language_label: 'Sprache',
+                done_title: 'Konfiguration erfolgreich!',
+                done_subtitle: 'Sie können diese Seite schließen.',
+            },
+            'en-US': {
+                title: 'Wi-Fi setup',
+                language_label: 'Language',
+                done_title: 'Configuration successful!',
+                done_subtitle: 'You can close this page.',
+            },
+            'es-ES': {
+                title: 'Configuración Wi-Fi',
+                language_label: 'Idioma',
+                done_title: '¡Configuración correcta!',
+                done_subtitle: 'Puede cerrar esta página.',
+            },
+            'fr-FR': {
+                title: 'Configuration Wi-Fi',
+                language_label: 'Langue',
+                done_title: 'Configuration réussie !',
+                done_subtitle: 'Vous pouvez fermer cette page.',
+            },
+            'hi-IN': {
+                title: 'Wi-Fi सेटअप',
+                language_label: 'भाषा',
+                done_title: 'कॉन्फ़िगरेशन सफल रहा!',
+                done_subtitle: 'आप इस पृष्ठ को बंद कर सकते हैं।',
+            },
+            'it-IT': {
+                title: 'Configurazione Wi-Fi',
+                language_label: 'Lingua',
+                done_title: 'Configurazione completata!',
+                done_subtitle: 'Puoi chiudere questa pagina.',
+            },
+            'ja-JP': {
+                title: 'Wi-Fi 設定',
+                language_label: '言語',
+                done_title: '設定が完了しました。',
+                done_subtitle: 'このページを閉じても問題ありません。',
+            },
+            'ko-KR': {
+                title: 'Wi-Fi 설정',
+                language_label: '언어',
+                done_title: '설정이 완료되었습니다!',
+                done_subtitle: '이 페이지를 닫아도 됩니다.',
+            },
+            'pt-BR': {
+                title: 'Configuração Wi-Fi',
+                language_label: 'Idioma',
+                done_title: 'Configuração concluída!',
+                done_subtitle: 'Você pode fechar esta página.',
+            },
+            'zh-CN': {
+                title: 'Wi-Fi 配置',
+                language_label: '语言',
+                done_title: '配置成功！',
+                done_subtitle: '您可以关闭此页面。',
+            },
+            'zh-TW': {
+                title: 'Wi-Fi 設定',
+                language_label: '語言',
+                done_title: '設定成功！',
+                done_subtitle: '您可以關閉此頁面。',
+            }
+        };
+
+        const languageMap = {
+            'ar': 'ar-SA', 'ar-SA': 'ar-SA', 'ar-EG': 'ar-SA', 'ar-AE': 'ar-SA',
+            'de': 'de-DE', 'de-DE': 'de-DE', 'de-AT': 'de-DE', 'de-CH': 'de-DE',
+            'en': 'en-US', 'en-US': 'en-US', 'en-GB': 'en-US', 'en-CA': 'en-US', 'en-AU': 'en-US',
+            'es': 'es-ES', 'es-ES': 'es-ES', 'es-MX': 'es-ES', 'es-AR': 'es-ES',
+            'fr': 'fr-FR', 'fr-FR': 'fr-FR', 'fr-CA': 'fr-FR', 'fr-BE': 'fr-FR',
+            'hi': 'hi-IN', 'hi-IN': 'hi-IN',
+            'it': 'it-IT', 'it-IT': 'it-IT', 'it-CH': 'it-IT',
+            'ja': 'ja-JP', 'ja-JP': 'ja-JP',
+            'ko': 'ko-KR', 'ko-KR': 'ko-KR',
+            'pt': 'pt-BR', 'pt-BR': 'pt-BR', 'pt-PT': 'pt-BR',
+            'zh': 'zh-CN', 'zh-CN': 'zh-CN', 'zh-TW': 'zh-TW', 'zh-HK': 'zh-TW', 'zh-SG': 'zh-CN'
+        };
+
+        function getSupportedLanguage(lang) {
+            if (languageMap[lang]) {
+                return languageMap[lang];
+            }
+            const mainLang = lang.split('-')[0];
+            if (languageMap[mainLang]) {
+                return languageMap[mainLang];
+            }
+            return 'en-US';
+        }
+
+        function changeLanguage() {
+            const lang = document.getElementById('language').value;
+
+            if (!translations[lang]) {
+                document.getElementById('language').value = 'en-US';
+                return changeLanguage();
+            }
+
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang.startsWith('ar') ? 'rtl' : 'ltr';
+
+            document.title = translations[lang].title;
+
+            document.querySelectorAll('[data-lang]').forEach(function (element) {
+                const key = element.getAttribute('data-lang');
+                element.textContent = translations[lang][key];
+            });
+
+            localStorage.setItem('preferred_language', lang);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const langParam = urlParams.get('lang');
+            const browserLang = navigator.language || navigator.userLanguage;
+
+            var savedLang = langParam ||
+                localStorage.getItem('preferred_language') ||
+                getSupportedLanguage(browserLang);
+
+            if (!translations[savedLang]) {
+                var mapped = getSupportedLanguage(savedLang);
+                savedLang = translations[mapped] ? mapped : 'en-US';
+            }
+
+            document.getElementById('language').value = savedLang;
+            changeLanguage();
+        });
+
+        window.addEventListener('load', function () {
+            setTimeout(function () {
                 fetch('/exit', {
                     method: 'POST'
                 })
-                .then(response => {
+                .then(function (response) {
                     if (response.ok) {
                         console.log('Exit config mode request sent');
                     } else {
                         console.error('Failed to send exit request');
                     }
                 })
-                .catch(error => {
+                .catch(function (error) {
                     console.error('Error:', error);
                 });
             }, 1000);
